@@ -1,6 +1,7 @@
 import '../css/detallecliente.css'
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import FormCliente from "../components/FormCliente";
  
 const DetalleCliente = () => {
  const { id } = useParams();
@@ -9,6 +10,7 @@ const DetalleCliente = () => {
 
   const [cliente, setCliente] = useState(null);
   const [mensaje, setMensaje] = useState("");
+  const [editando, setEditando] = useState(false);
 
   useEffect(() => {
     fetch(`https://fakestoreapi.com/users/${id}`)
@@ -46,6 +48,7 @@ const DetalleCliente = () => {
       <p>Rol actual: {role}</p>
 
       {mensaje && <p className = 'mensaje-eliminado'>{mensaje}</p>}
+      {editando && <FormCliente cliente={cliente}/>}
 
       <p>
         <strong>ID:</strong> {cliente.id}
@@ -93,9 +96,14 @@ const DetalleCliente = () => {
       </p>
 
       {role?.trim() === "Gerencia" && (
-        <button className='btn-eliminar'onClick={eliminarCliente}>
-          Eliminar Cliente
-        </button>
+        <>
+            <button className='btn-eliminar'onClick={() => setEditando(true)}>
+              Editar Cliente
+            </button>
+            <button className='btn-eliminar'onClick={eliminarCliente}>
+              Eliminar Cliente
+            </button>
+        </>
       )}
     </div>
   );
