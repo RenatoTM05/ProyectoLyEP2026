@@ -67,7 +67,16 @@ const FormCliente = ({ cliente }) => {
                 let respuesta;
                 if (cliente) {
                     respuesta = await clientesService.actualizarCliente(cliente.id, nuevoCliente);
-                    setMensaje(`Cliente actualizado correctamente. ID: ${respuesta.id}`);
+                    setMensaje(`Cliente actualizado correctamente. ID: ${cliente.id}`);
+
+                        setNombre("");
+                        setEmail("");
+                        setTelefono("");
+                        setCiudad("");
+
+                        setTimeout(() => {
+                            window.location.href = "/clientes";
+                        }, 1500);
 
                 } else {
 
@@ -92,7 +101,7 @@ const FormCliente = ({ cliente }) => {
 
         <div className='formulario-cliente'>
 
-            <h3>Nuevo Cliente</h3>
+            <h3>{cliente ? "Editar Cliente" : "Nuevo Cliente"}</h3>
 
             <Form onSubmit={manejarSubmit}>
 
@@ -161,7 +170,9 @@ const FormCliente = ({ cliente }) => {
                     {
                         loading
                             ? <Spinner size="sm" />
-                            : "Guardar Cliente"
+                            : cliente ?
+                            "Editar Cliente"
+                            : "Crear Cliente"
                     }
 
                 </Button>
