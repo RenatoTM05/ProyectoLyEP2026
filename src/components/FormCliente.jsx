@@ -1,9 +1,9 @@
 import '../css/formcliente.css'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import clientesService from "../services/clientesService";
 
-const FormCliente = () => {
+const FormCliente = ({ cliente }) => {
 
     const [nombre, setNombre] = useState("");
     const [email, setEmail] = useState("");
@@ -13,6 +13,15 @@ const FormCliente = () => {
     const [mensaje, setMensaje] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (cliente) {
+            setNombre(cliente.name.firstname);
+            setEmail(cliente.email);
+            setTelefono(cliente.phone);
+            setCiudad(cliente.address.city);
+        }
+    }, [cliente]);
 
     const manejarSubmit = async (e) => {
 
