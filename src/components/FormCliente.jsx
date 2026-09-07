@@ -62,34 +62,28 @@ const FormCliente = ({ cliente }) => {
             phone: telefono
         };
 
-        try {
+       try{
+                setLoading(true);
+                let respuesta;
+                if (cliente) {
+                    respuesta = await clientesService.actualizarCliente(cliente.id, nuevoCliente);
+                    setMensaje(`Cliente actualizado correctamente. ID: ${respuesta.id}`);
 
-            setLoading(true);
+                } else {
 
-            const respuesta =
-                await clientesService.crearCliente(
-                    nuevoCliente
-                );
-
-            setMensaje(
-                `Cliente creado correctamente. ID: ${respuesta.id}`
-            );
-
-            setNombre("");
-            setEmail("");
-            setTelefono("");
-            setCiudad("");
+                    respuesta = await clientesService.crearCliente(nuevoCliente);
+                    setMensaje(`Cliente creado correctamente. ID: ${respuesta.id}`);
+                    setNombre("");
+                    setEmail("");
+                    setTelefono("");
+                    setCiudad("");
+                }
 
         } catch {
-
-            setError(
-                "Ocurrió un error al crear el cliente."
-            );
+            setError( cliente  ? "Ocurrió un error al actualizar el cliente."    : "Ocurrió un error al crear el cliente.");
 
         } finally {
-
             setLoading(false);
-
         }
 
     };
