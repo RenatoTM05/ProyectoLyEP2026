@@ -36,6 +36,9 @@ const ListaClientes = () => {
         .includes(consulta) ||
       cliente.address.city
         .toLowerCase()
+        .includes(consulta) ||
+      cliente.email
+        .toLowerCase()
         .includes(consulta)
   );
 
