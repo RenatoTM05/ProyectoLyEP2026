@@ -95,32 +95,40 @@ const ListaClientes = () => {
 
         <tbody>
 
-          {clientesFiltrados.map((cliente) => (
-            <tr key={cliente.id}>
-
-              <td>{cliente.id}</td>
-
-              <td>
-                {cliente.name.firstname} {cliente.name.lastname}
+          {clientesFiltrados.length === 0 ? (
+            <tr>
+              <td colSpan="6">
+                No se encontraron clientes que coincidan con la búsqueda.
               </td>
-
-              <td>{cliente.email}</td>
-
-              <td>{cliente.phone}</td>
-
-              <td>{cliente.address.city}</td>
-
-              <td>
-                <Link
-                  className="btn-ficha"
-                  to={`/clientes/${cliente.id}`}
-                >
-                  Ver Ficha Completa
-                </Link>
-              </td>
-
             </tr>
-          ))}
+          ) : (
+            clientesFiltrados.map((cliente) => (
+              <tr key={cliente.id}>
+
+                <td>{cliente.id}</td>
+
+                <td>
+                  {cliente.name.firstname} {cliente.name.lastname}
+                </td>
+
+                <td>{cliente.email}</td>
+
+                <td>{cliente.phone}</td>
+
+                <td>{cliente.address.city}</td>
+
+                <td>
+                  <Link
+                    className="btn-ficha"
+                    to={`/clientes/${cliente.id}`}
+                  >
+                    Ver Ficha Completa
+                  </Link>
+                </td>
+
+              </tr>
+            ))
+          )}
 
         </tbody>
 
