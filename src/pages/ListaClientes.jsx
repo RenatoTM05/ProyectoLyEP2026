@@ -8,6 +8,7 @@ const ListaClientes = () => {
   const [busqueda, setBusqueda] = useState("");
   const [criterioOrden, setCriterioOrden] = useState("nombre");
   const [direccionOrden, setDireccionOrden] = useState("ascendente");
+  const [paginaActual, setPaginaActual] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -64,6 +65,14 @@ const ListaClientes = () => {
       : -valores[criterioOrden];
   });
 
+  const clientesPorPagina = 5;
+  const totalPaginas = Math.ceil(clientesOrdenados.length / clientesPorPagina);
+  const indiceInicial = (paginaActual - 1) * clientesPorPagina;
+  const clientesPaginados = clientesOrdenados.slice(
+    indiceInicial,
+    indiceInicial + clientesPorPagina
+  );
+
   if (loading) {
     return <h2>Cargando clientes...</h2>;
   }
@@ -91,7 +100,10 @@ const ListaClientes = () => {
           type="text"
           placeholder="Buscar por nombre completo, email o ciudad"
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={(e) => {
+            setBusqueda(e.target.value);
+            setPaginaActual(1);
+          }}
         />
 
         <p className="cantidad-clientes">
@@ -108,7 +120,10 @@ const ListaClientes = () => {
           <select
             className="ordenamiento-select"
             value={criterioOrden}
-            onChange={(e) => setCriterioOrden(e.target.value)}
+            onChange={(e) => {
+              setCriterioOrden(e.target.value);
+              setPaginaActual(1);
+            }}
           >
             <option value="nombre">Nombre</option>
             <option value="email">Email</option>
@@ -121,7 +136,10 @@ const ListaClientes = () => {
           <select
             className="ordenamiento-select"
             value={direccionOrden}
-            onChange={(e) => setDireccionOrden(e.target.value)}
+            onChange={(e) => {
+              setDireccionOrden(e.target.value);
+              setPaginaActual(1);
+            }}
           >
             <option value="ascendente">Ascendente</option>
             <option value="descendente">Descendente</option>
@@ -151,7 +169,7 @@ const ListaClientes = () => {
               </td>
             </tr>
           ) : (
-            clientesOrdenados.map((cliente) => (
+            clientesPaginados.map((cliente) => (
               <tr key={cliente.id}>
 
                 <td>{cliente.id}</td>
@@ -182,6 +200,32 @@ const ListaClientes = () => {
         </tbody>
 
       </table>
+
+      {totalPaginas > 1 && (
+        <div className="paginacion-clientes">
+          <button
+            type="button"
+            className="boton-paginacion"
+            disabled={paginaActual === 1}
+            onClick={() => setPaginaActual(paginaActual - 1)}
+          >
+            Anterior
+          </button>
+
+          <span>
+            Página {paginaActual} de {totalPaginas}
+          </span>
+
+          <button
+            type="button"
+            className="boton-paginacion"
+            disabled={paginaActual === totalPaginas}
+            onClick={() => setPaginaActual(paginaActual + 1)}
+          >
+            Siguiente
+          </button>
+        </div>
+      )}
 
     </div>
   );
