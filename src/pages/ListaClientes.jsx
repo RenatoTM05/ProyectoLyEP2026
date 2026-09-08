@@ -27,14 +27,16 @@ const ListaClientes = () => {
       });
   }, []);
 
+  const consulta = busqueda.toLowerCase();
+
   const clientesFiltrados = clientes.filter(
     (cliente) =>
       cliente.name.lastname
         .toLowerCase()
-        .includes(busqueda.toLowerCase()) ||
+        .includes(consulta) ||
       cliente.address.city
         .toLowerCase()
-        .includes(busqueda.toLowerCase())
+        .includes(consulta)
   );
 
   if (loading) {
