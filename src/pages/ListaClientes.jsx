@@ -31,6 +31,9 @@ const ListaClientes = () => {
 
   const clientesFiltrados = clientes.filter(
     (cliente) =>
+      cliente.name.firstname
+        .toLowerCase()
+        .includes(consulta) ||
       cliente.name.lastname
         .toLowerCase()
         .includes(consulta) ||
@@ -67,7 +70,7 @@ const ListaClientes = () => {
         <input
           className="buscador"
           type="text"
-          placeholder="Buscar por apellido, email o ciudad"
+          placeholder="Buscar por nombre completo, email o ciudad"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
