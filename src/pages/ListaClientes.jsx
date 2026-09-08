@@ -6,6 +6,8 @@ import FormCliente from "../components/FormCliente";
 const ListaClientes = () => {
   const [clientes, setClientes] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const [criterioOrden, setCriterioOrden] = useState("nombre");
+  const [direccionOrden, setDireccionOrden] = useState("ascendente");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -45,6 +47,23 @@ const ListaClientes = () => {
         .includes(consulta)
   );
 
+  const clientesOrdenados = [...clientesFiltrados].sort((clienteA, clienteB) => {
+    const valores = {
+      nombre: `${clienteA.name.firstname} ${clienteA.name.lastname}`.toLowerCase()
+        .localeCompare(
+          `${clienteB.name.firstname} ${clienteB.name.lastname}`.toLowerCase()
+        ),
+      email: clienteA.email.toLowerCase().localeCompare(clienteB.email.toLowerCase()),
+      ciudad: clienteA.address.city
+        .toLowerCase()
+        .localeCompare(clienteB.address.city.toLowerCase())
+    };
+
+    return direccionOrden === "ascendente"
+      ? valores[criterioOrden]
+      : -valores[criterioOrden];
+  });
+
   if (loading) {
     return <h2>Cargando clientes...</h2>;
   }
@@ -80,6 +99,36 @@ const ListaClientes = () => {
         </p>
 
       </div>
+
+      <div className="ordenamiento-clientes">
+        <span className="ordenamiento-titulo">Ordenar clientes</span>
+
+        <label>
+          Criterio
+          <select
+            className="ordenamiento-select"
+            value={criterioOrden}
+            onChange={(e) => setCriterioOrden(e.target.value)}
+          >
+            <option value="nombre">Nombre</option>
+            <option value="email">Email</option>
+            <option value="ciudad">Ciudad</option>
+          </select>
+        </label>
+
+        <label>
+          Dirección
+          <select
+            className="ordenamiento-select"
+            value={direccionOrden}
+            onChange={(e) => setDireccionOrden(e.target.value)}
+          >
+            <option value="ascendente">Ascendente</option>
+            <option value="descendente">Descendente</option>
+          </select>
+        </label>
+      </div>
+
       <table className="tabla-clientes">
 
         <thead>
@@ -95,14 +144,14 @@ const ListaClientes = () => {
 
         <tbody>
 
-          {clientesFiltrados.length === 0 ? (
+          {clientesOrdenados.length === 0 ? (
             <tr>
               <td colSpan="6">
                 No se encontraron clientes que coincidan con la búsqueda.
               </td>
             </tr>
           ) : (
-            clientesFiltrados.map((cliente) => (
+            clientesOrdenados.map((cliente) => (
               <tr key={cliente.id}>
 
                 <td>{cliente.id}</td>
