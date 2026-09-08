@@ -67,7 +67,7 @@ const ListaClientes = () => {
         <input
           className="buscador"
           type="text"
-          placeholder="Buscar por apellido o ciudad"
+          placeholder="Buscar por apellido, email o ciudad"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
