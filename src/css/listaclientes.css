@@ -130,3 +130,23 @@ input[type="text"]::placeholder{
     border:1px solid #ffd6e7;
     border-radius:12px;
 }
+
+.mensaje-error{
+    max-width:700px;
+    margin:40px auto;
+    padding:25px;
+    text-align:center;
+    color:#842029;
+    background:#fff1f2;
+    border:1px solid #f5b5bd;
+    border-radius:12px;
+}
+
+.mensaje-error button{
+    padding:10px 18px;
+    color:white;
+    background:#d63384;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+}

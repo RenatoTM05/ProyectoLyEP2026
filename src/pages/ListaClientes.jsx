@@ -1,5 +1,5 @@
 import "../css/listaclientes.css"
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import FormCliente from "../components/FormCliente";
 
@@ -7,25 +7,34 @@ const ListaClientes = () => {
   const [clientes, setClientes] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
+  const cargarClientes = useCallback(() => {
+    setLoading(true);
+    setError("");
+
     fetch("https://fakestoreapi.com/users")
       .then((res) => {
         if (!res.ok) {
-          throw new Error("Error al obtener clientes");
+          throw new Error("No se pudo obtener la lista de clientes.");
         }
         return res.json();
       })
       .then((data) => {
         setClientes(data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError(true);
+      .catch((error) => {
+        setError(error.message || "Ocurrió un error inesperado.");
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    const inicioCarga = window.setTimeout(cargarClientes, 0);
+    return () => window.clearTimeout(inicioCarga);
+  }, [cargarClientes]);
 
   const clientesFiltrados = clientes.filter(
     (cliente) =>
@@ -42,7 +51,15 @@ const ListaClientes = () => {
   }
 
   if (error) {
-    return <h2>Error al cargar los clientes.</h2>;
+    return (
+      <section className="mensaje-error" role="alert">
+        <h2>No se pudieron cargar los clientes</h2>
+        <p>{error}</p>
+        <button type="button" onClick={cargarClientes}>
+          Reintentar
+        </button>
+      </section>
+    );
   }
 
   return (
@@ -85,7 +102,7 @@ const ListaClientes = () => {
         </p>
 
       ) : (
-        
+
       <table className="tabla-clientes">
 
         <thead>
