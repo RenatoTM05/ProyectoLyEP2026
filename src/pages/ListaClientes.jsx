@@ -47,7 +47,13 @@ const ListaClientes = () => {
   );
 
   if (loading) {
-    return <h2>Cargando clientes...</h2>;
+    return (
+      <section className="mensaje-carga" role="status" aria-live="polite">
+        <div className="spinner-carga" aria-hidden="true"></div>
+        <h2>Cargando clientes...</h2>
+        <p>Estamos obteniendo la información. Esperá un momento.</p>
+      </section>
+    );
   }
 
   if (error) {

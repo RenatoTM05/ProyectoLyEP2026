@@ -150,3 +150,30 @@ input[type="text"]::placeholder{
     border-radius:10px;
     font-weight:600;
 }
+
+.mensaje-carga{
+    max-width:700px;
+    margin:40px auto;
+    padding:30px;
+    text-align:center;
+    color:#5f4b57;
+    background:#fff7fa;
+    border:1px solid #ffd6e7;
+    border-radius:12px;
+}
+
+.spinner-carga{
+    width:42px;
+    height:42px;
+    margin:0 auto 16px;
+    border:5px solid #ffd6e7;
+    border-top-color:#d63384;
+    border-radius:50%;
+    animation:girar-carga 0.8s linear infinite;
+}
+
+@keyframes girar-carga{
+    to{
+        transform:rotate(360deg);
+    }
+}
