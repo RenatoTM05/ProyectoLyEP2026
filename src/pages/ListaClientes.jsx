@@ -72,6 +72,20 @@ const ListaClientes = () => {
         </p>
 
       </div>
+      {clientes.length === 0 ? (
+
+        <p className="mensaje-lista-vacia">
+          No hay clientes registrados todavía.
+        </p>
+
+      ) : clientesFiltrados.length === 0 ? (
+        
+        <p className="mensaje-lista-vacia">
+          No se encontraron clientes con esa búsqueda.
+        </p>
+
+      ) : (
+        
       <table className="tabla-clientes">
 
         <thead>
@@ -117,6 +131,7 @@ const ListaClientes = () => {
         </tbody>
 
       </table>
+      )}
 
     </div>
   );

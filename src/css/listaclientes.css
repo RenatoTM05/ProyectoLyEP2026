@@ -119,4 +119,14 @@ input[type="text"]{
 
 input[type="text"]::placeholder{
     color:#c78aa6;
-} 
+}
+
+.mensaje-lista-vacia{
+    margin-top:25px;
+    padding:18px;
+    text-align:center;
+    color:#5f4b57;
+    background:#fff7fa;
+    border:1px solid #ffd6e7;
+    border-radius:12px;
+}
