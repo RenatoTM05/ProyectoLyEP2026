@@ -6,6 +6,7 @@ import ListaClientes from '../pages/ListaClientes'
 import DetalleCliente from '../pages/DetalleCliente'
 import ErrorPage from '../pages/ErrorPage'
 import RutaProtegida from '../components/RutaProtegida'
+import FormCliente from '../components/FormCliente'
 const AppRoutes = () => {
   return (
     <Routes>
@@ -19,6 +20,14 @@ const AppRoutes = () => {
           </RutaProtegida>
         }
       />
+      <Route
+      path="/Formulario"
+      element={
+           <FormCliente/>
+      }
+      />
+
+      
       <Route
         path="/clientes"
         element={
