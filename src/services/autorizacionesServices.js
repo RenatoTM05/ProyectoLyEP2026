@@ -37,12 +37,14 @@ const usuarios = [
   }
 ]
 const login = (email, password, sector) => {
-  return usuarios.find(
-    usuario =>
-      usuario.email === email &&
-      usuario.password === password &&
-      usuario.sector === sector
+  const usuario = usuarios.find(
+    u => u.email.toLowerCase() === email && u.password === password
   )
+  if (!usuario) return { ok: false, error: 'CREDENCIALES' }
+  if (usuario.sector !== sector) return { ok: false, error: 'SECTOR' }
+
+  const { password: _omit, ...usuarioSeguro } = usuario  
+  return { ok: true, usuario: usuarioSeguro }
 }
 export default {
   login
