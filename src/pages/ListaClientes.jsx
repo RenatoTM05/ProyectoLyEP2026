@@ -102,10 +102,12 @@ const ListaClientes = () => {
         </p>
 
       ) : clientesFiltrados.length === 0 ? (
-        
-        <p className="mensaje-lista-vacia">
-          No se encontraron clientes con esa búsqueda.
-        </p>
+        <section className="mensaje-lista-vacia" role="status">
+          <p>No se encontraron clientes con esa búsqueda.</p>
+          <button type="button" onClick={() => setBusqueda("")}>
+            Limpiar búsqueda
+          </button>
+        </section>
 
       ) : (
 

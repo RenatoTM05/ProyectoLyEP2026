@@ -131,6 +131,15 @@ input[type="text"]::placeholder{
     border-radius:12px;
 }
 
+.mensaje-lista-vacia button{
+    padding:10px 18px;
+    color:white;
+    background:#d63384;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+}
+
 .mensaje-error{
     max-width:700px;
     margin:40px auto;
