@@ -47,7 +47,7 @@ const eliminarCliente = async () => {
       navigate("/clientes");
       setEliminando(false);
     }, 1000);
-  } catch (error) {
+  } catch {
     setMensaje("Error al eliminar cliente");
     setEliminando(false);
   }
