@@ -9,6 +9,7 @@ const DetalleCliente = () => {
 
   const [cliente, setCliente] = useState(null);
   const [mensaje, setMensaje] = useState("");
+  const [eliminando, setEliminando] = useState(false);
 
   useEffect(() => {
     fetch(`https://fakestoreapi.com/users/${id}`)
@@ -16,26 +17,42 @@ const DetalleCliente = () => {
       .then((data) => setCliente(data));
   }, [id]);
 
-  const eliminarCliente = async () => {
-    try {
-      const respuesta = await fetch(
-        `https://fakestoreapi.com/users/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+const eliminarCliente = async () => {
+  const confirmar = window.confirm(
+    "¿Está seguro de que desea eliminar este cliente?"
+  );
 
-      if (respuesta.ok) {
-        setMensaje("Cliente eliminado correctamente");
+  if (!confirmar) {
+    return;
+  }
 
-        setTimeout(() => {
-          navigate("/clientes");
-        }, 2000);
+  setEliminando(true);
+  setMensaje("");
+
+  try {
+    const respuesta = await fetch(
+      `https://fakestoreapi.com/users/${id}`,
+      {
+        method: "DELETE",
       }
-    } catch (error) {
-      setMensaje("Error al eliminar cliente");
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudo eliminar el cliente");
     }
-  };
+
+    setMensaje("Cliente eliminado correctamente");
+
+    setTimeout(() => {
+      navigate("/clientes");
+      setEliminando(false);
+    }, 1000);
+  } catch (error) {
+    setMensaje("Error al eliminar cliente");
+    setEliminando(false);
+  }
+};
+
   if (!cliente) {
     return <h2>Cargando cliente...</h2>;
   }
@@ -93,7 +110,7 @@ const DetalleCliente = () => {
       </p>
 
       {role?.trim() === "Gerencia" && (
-        <button className='btn-eliminar'onClick={eliminarCliente}>
+        <button className='btn-eliminar'onClick={eliminarCliente} disabled={eliminando}>
           Eliminar Cliente
         </button>
       )}
