@@ -110,8 +110,12 @@ const eliminarCliente = async () => {
       </p>
 
       {role?.trim() === "Gerencia" && (
-        <button className='btn-eliminar'onClick={eliminarCliente} disabled={eliminando}>
-          Eliminar Cliente
+        <button
+          className='btn-eliminar'
+          onClick={eliminarCliente}
+          disabled={eliminando}
+        >
+          {eliminando ? "Eliminando..." : "Eliminar Cliente"}
         </button>
       )}
     </div>
