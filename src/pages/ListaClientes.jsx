@@ -1,9 +1,14 @@
-import "../css/listaclientes.css"
+import "../css/listaclientes.css";
+
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+
+import { Link, useLocation } from "react-router-dom";
+
 import FormCliente from "../components/FormCliente";
 
 const ListaClientes = () => {
+  const location = useLocation();
+
   const [clientes, setClientes] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [loading, setLoading] = useState(true);
@@ -18,14 +23,25 @@ const ListaClientes = () => {
         return res.json();
       })
       .then((data) => {
-        setClientes(data);
+        const clienteEliminado = location.state?.clienteEliminado;
+
+        if (clienteEliminado) {
+          setClientes(
+            data.filter((cliente) => cliente.id !== clienteEliminado)
+          );
+
+          window.history.replaceState({}, document.title);
+        } else {
+          setClientes(data);
+        }
+
         setLoading(false);
       })
       .catch(() => {
         setError(true);
         setLoading(false);
       });
-  }, []);
+  }, [location]);
 
   const clientesFiltrados = clientes.filter(
     (cliente) =>
@@ -47,17 +63,14 @@ const ListaClientes = () => {
 
   return (
     <div className="clientes-container">
-
       <h1>Clientes</h1>
+
       <FormCliente />
 
       <hr />
 
       <div className="contenedor-buscador">
-
-        <h2 className="titulo-buscador">
-          Buscar Clientes
-        </h2>
+        <h2 className="titulo-buscador">Buscar Clientes</h2>
 
         <input
           className="buscador"
@@ -70,10 +83,9 @@ const ListaClientes = () => {
         <p className="cantidad-clientes">
           Clientes encontrados: {clientesFiltrados.length}
         </p>
-
       </div>
-      <table className="tabla-clientes">
 
+      <table className="tabla-clientes">
         <thead>
           <tr>
             <th>ID</th>
@@ -86,10 +98,8 @@ const ListaClientes = () => {
         </thead>
 
         <tbody>
-
           {clientesFiltrados.map((cliente) => (
             <tr key={cliente.id}>
-
               <td>{cliente.id}</td>
 
               <td>
@@ -110,14 +120,10 @@ const ListaClientes = () => {
                   Ver Ficha Completa
                 </Link>
               </td>
-
             </tr>
           ))}
-
         </tbody>
-
       </table>
-
     </div>
   );
 };

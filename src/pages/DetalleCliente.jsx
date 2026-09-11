@@ -44,7 +44,7 @@ const eliminarCliente = async () => {
     setMensaje("Cliente eliminado correctamente");
 
     setTimeout(() => {
-      navigate("/clientes");
+      navigate("/clientes", { state: { clienteEliminado: Number(id) } });
       setEliminando(false);
     }, 1000);
   } catch {
