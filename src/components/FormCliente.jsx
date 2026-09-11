@@ -7,6 +7,7 @@ const FormCliente = () => {
 
     const [nombre, setNombre] = useState("");
     const [email, setEmail] = useState("");
+    const [contraseña,setContraseña]=useState("");
     const [telefono, setTelefono] = useState("");
     const [ciudad, setCiudad] = useState("");
 
@@ -27,19 +28,31 @@ const FormCliente = () => {
             telefono.trim() === "" ||
             ciudad.trim() === ""
         ) {
-
             setError("Complete todos los campos.");
-
             return;
         }
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const telefonoRegex = /^\d{3}[-\s]?\d{3}[-\s]?\d{4}$/;
 
+if (!emailRegex.test(email) || !telefonoRegex.test(telefono)){
+            setError("Debe ingresar un formato de email o telefonos valido")
+            return;
+        }
+        if(contraseña.length<8 || !/[A-Z]/.test(contraseña) || !/[0-9]/.test(contraseña)){
+            setError(
+        "Parámetros de contraseña incorrectos. La contraseña debe tener: " +
+        "mínimo 8 caracteres, una mayúscula y un número."
+            );
+                return;
+        }
+    
         const nuevoCliente = {
 
             email,
 
             username: nombre.toLowerCase().replace(/\s/g, ""),
 
-            password: "1234",
+            password: contraseña,
 
             name: {
                 firstname: nombre,
@@ -57,10 +70,7 @@ const FormCliente = () => {
 
             setLoading(true);
 
-            const respuesta =
-                await clientesService.crearCliente(
-                    nuevoCliente
-                );
+            const respuesta = await clientesService.crearCliente( nuevoCliente);
 
             setMensaje(
                 `Cliente creado correctamente. ID: ${respuesta.id}`
@@ -68,6 +78,7 @@ const FormCliente = () => {
 
             setNombre("");
             setEmail("");
+            setContraseña("");
             setTelefono("");
             setCiudad("");
 
@@ -100,9 +111,19 @@ const FormCliente = () => {
                     <Form.Control
                         type="text"
                         value={nombre}
-                        onChange={(e) =>
-                            setNombre(e.target.value)
-                        }
+                        onChange={(e) =>setNombre(e.target.value)}
+                    />
+
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+
+                    <Form.Label>Contraseña</Form.Label>
+
+                    <Form.Control
+                        type="password"
+                        value={contraseña}
+                        onChange={(e) =>setContraseña(e.target.value)}
                     />
 
                 </Form.Group>
@@ -169,8 +190,7 @@ const FormCliente = () => {
                 mensaje &&
                 <Alert
                     className="mt-3"
-                    variant="success"
-                >
+                    variant="success">
                     {mensaje}
                 </Alert>
             }
