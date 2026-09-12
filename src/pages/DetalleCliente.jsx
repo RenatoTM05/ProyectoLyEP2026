@@ -1,6 +1,10 @@
 import '../css/detallecliente.css'
-import { useCallback, useEffect, useState } from "react";
+
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import FormCliente from "../components/FormCliente";
 import { Link, useParams, useNavigate } from "react-router-dom";
+
  
 const DetalleCliente = () => {
  const { id } = useParams();
@@ -9,6 +13,8 @@ const DetalleCliente = () => {
 
   const [cliente, setCliente] = useState(null);
   const [mensaje, setMensaje] = useState("");
+  const [editando, setEditando] = useState(false);
+  const formularioRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [clienteInexistente, setClienteInexistente] = useState(false);
@@ -106,6 +112,11 @@ const DetalleCliente = () => {
       <p>Rol actual: {role}</p>
 
       {mensaje && <p className = 'mensaje-eliminado'>{mensaje}</p>}
+      {editando && (
+          <div ref={formularioRef}>
+            <FormCliente cliente={cliente} />
+          </div>
+      )}
 
       <p>
         <strong>ID:</strong> {cliente.id}
@@ -153,9 +164,21 @@ const DetalleCliente = () => {
       </p>
 
       {role?.trim() === "Gerencia" && (
-        <button className='btn-eliminar'onClick={eliminarCliente}>
-          Eliminar Cliente
-        </button>
+        <>
+            <button className='btn-eliminar'onClick={() => {
+              setEditando(true);
+
+              setTimeout(() => {
+                formularioRef.current?.scrollIntoView({ behavior: "smooth" });
+              })
+
+            }}>
+              Editar Cliente
+            </button>
+            <button className='btn-eliminar'onClick={eliminarCliente}>
+              Eliminar Cliente
+            </button>
+        </>
       )}
     </div>
   );

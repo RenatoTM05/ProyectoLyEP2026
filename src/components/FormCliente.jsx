@@ -1,9 +1,9 @@
 import '../css/formcliente.css'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import clientesService from "../services/clientesService";
 
-const FormCliente = () => {
+const FormCliente = ({ cliente }) => {
 
     const [nombre, setNombre] = useState("");
     const [email, setEmail] = useState("");
@@ -13,6 +13,15 @@ const FormCliente = () => {
     const [mensaje, setMensaje] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (cliente) {
+            setNombre(cliente.name.firstname);
+            setEmail(cliente.email);
+            setTelefono(cliente.phone);
+            setCiudad(cliente.address.city);
+        }
+    }, [cliente]);
 
     const manejarSubmit = async (e) => {
 
@@ -53,34 +62,37 @@ const FormCliente = () => {
             phone: telefono
         };
 
-        try {
+       try{
+                setLoading(true);
+                let respuesta;
+                if (cliente) {
+                    respuesta = await clientesService.actualizarCliente(cliente.id, nuevoCliente);
+                    setMensaje(`Cliente actualizado correctamente. ID: ${cliente.id}`);
 
-            setLoading(true);
+                        setNombre("");
+                        setEmail("");
+                        setTelefono("");
+                        setCiudad("");
 
-            const respuesta =
-                await clientesService.crearCliente(
-                    nuevoCliente
-                );
+                        setTimeout(() => {
+                            window.location.href = "/clientes";
+                        }, 1500);
 
-            setMensaje(
-                `Cliente creado correctamente. ID: ${respuesta.id}`
-            );
+                } else {
 
-            setNombre("");
-            setEmail("");
-            setTelefono("");
-            setCiudad("");
+                    respuesta = await clientesService.crearCliente(nuevoCliente);
+                    setMensaje(`Cliente creado correctamente. ID: ${respuesta.id}`);
+                    setNombre("");
+                    setEmail("");
+                    setTelefono("");
+                    setCiudad("");
+                }
 
         } catch {
-
-            setError(
-                "Ocurrió un error al crear el cliente."
-            );
+            setError( cliente  ? "Ocurrió un error al actualizar el cliente."    : "Ocurrió un error al crear el cliente.");
 
         } finally {
-
             setLoading(false);
-
         }
 
     };
@@ -89,7 +101,7 @@ const FormCliente = () => {
 
         <div className='formulario-cliente'>
 
-            <h3>Nuevo Cliente</h3>
+            <h3>{cliente ? "Editar Cliente" : "Nuevo Cliente"}</h3>
 
             <Form onSubmit={manejarSubmit}>
 
@@ -158,7 +170,9 @@ const FormCliente = () => {
                     {
                         loading
                             ? <Spinner size="sm" />
-                            : "Guardar Cliente"
+                            : cliente ?
+                            "Editar Cliente"
+                            : "Crear Cliente"
                     }
 
                 </Button>
