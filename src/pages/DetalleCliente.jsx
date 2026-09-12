@@ -3,7 +3,7 @@ import '../css/detallecliente.css'
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import FormCliente from "../components/FormCliente";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
  
 const DetalleCliente = () => {
@@ -52,6 +52,10 @@ const DetalleCliente = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    cargarCliente();
+  }, [cargarCliente]);
+
 const eliminarCliente = async () => {
   const confirmar = window.confirm(
     "¿Está seguro de que desea eliminar este cliente?"
@@ -88,9 +92,6 @@ const eliminarCliente = async () => {
   }
 };
 
-  if (!cliente) {
-    return <h2>Cargando cliente...</h2>;
-  };
   if (loading) {
     return (
       <section className="estado-detalle" role="status" aria-live="polite">
@@ -179,25 +180,28 @@ const eliminarCliente = async () => {
       </p>
 
       {role?.trim() === "Gerencia" && (
-        <button
-          className="btn-eliminar"
-          onClick={eliminarCliente}
-          disabled={eliminando}
-          title={eliminando ? "Eliminando cliente" : "Eliminar cliente"}
-        >
-          {eliminando ? "Eliminando..." : "Eliminar Cliente"}
-        </button>
         <>
-            <button className='btn-eliminar'onClick={() => {
+          <button
+            className="btn-eliminar"
+            onClick={eliminarCliente}
+            disabled={eliminando}
+            title={eliminando ? "Eliminando cliente" : "Eliminar cliente"}
+          >
+            {eliminando ? "Eliminando..." : "Eliminar Cliente"}
+          </button>
+
+          <button
+            className="btn-eliminar"
+            onClick={() => {
               setEditando(true);
 
               setTimeout(() => {
                 formularioRef.current?.scrollIntoView({ behavior: "smooth" });
-              })
-
-            }}>
-              Editar Cliente
-            </button>
+              });
+            }}
+          >
+            Editar Cliente
+          </button>
         </>
       )}
     </div>
