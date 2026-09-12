@@ -14,6 +14,11 @@ const Nav = () => {
                         Clientes
                     </NavLink>
                 </li>
+                <li>
+                    <NavLink to="/Formulario">
+                        Crear Cliente
+                    </NavLink>
+                </li>
             </ul>
         </nav>
     );
