@@ -134,12 +134,6 @@ const ListaClientes = () => {
 
   return (
     <div className="clientes-container">
-      <h1>Clientes</h1>
-
-      <FormCliente />
-
-      <hr />
-
       <div className="contenedor-buscador">
         <h2 className="titulo-buscador">Buscar Clientes</h2>
 

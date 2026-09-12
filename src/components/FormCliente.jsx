@@ -1,6 +1,7 @@
 import '../css/formcliente.css'
 import { useState, useEffect } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import clientesService from "../services/clientesService";
 
 const FormCliente = ({ cliente }) => {
@@ -14,6 +15,7 @@ const FormCliente = ({ cliente }) => {
     const [mensaje, setMensaje] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (cliente) {
@@ -40,10 +42,12 @@ const FormCliente = ({ cliente }) => {
             setError("Complete todos los campos.");
             return;
         }
+const emailNormalizado = email.trim();
+const telefonoNormalizado = telefono.trim();
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const telefonoRegex = /^\d{3}[-\s]?\d{3}[-\s]?\d{4}$/;
+const telefonoRegex = /^\d{10}$/;
 
-if (!emailRegex.test(email) || !telefonoRegex.test(telefono)){
+if (!emailRegex.test(emailNormalizado) || !telefonoRegex.test(telefonoNormalizado)){
             setError("Debe ingresar un formato de email o telefonos valido")
             return;
         }
@@ -57,7 +61,7 @@ if (!emailRegex.test(email) || !telefonoRegex.test(telefono)){
     
         const nuevoCliente = {
 
-            email,
+            email: emailNormalizado,
 
             username: nombre.toLowerCase().replace(/\s/g, ""),
 
@@ -72,7 +76,7 @@ if (!emailRegex.test(email) || !telefonoRegex.test(telefono)){
                 city: ciudad
             },
 
-            phone: telefono
+            phone: telefonoNormalizado
         };
 
        try{
@@ -87,10 +91,6 @@ if (!emailRegex.test(email) || !telefonoRegex.test(telefono)){
                         setTelefono("");
                         setCiudad("");
 
-                        setTimeout(() => {
-                            window.location.href = "/clientes";
-                        }, 1500);
-
                 } else {
 
                     respuesta = await clientesService.crearCliente(nuevoCliente);
@@ -100,6 +100,10 @@ if (!emailRegex.test(email) || !telefonoRegex.test(telefono)){
                     setTelefono("");
                     setCiudad("");
                 }
+
+                setTimeout(() => {
+                    navigate("/clientes");
+                }, 1500);
 
         } catch {
             setError( cliente  ? "Ocurrió un error al actualizar el cliente."    : "Ocurrió un error al crear el cliente.");
@@ -139,6 +143,9 @@ if (!emailRegex.test(email) || !telefonoRegex.test(telefono)){
                         value={contraseña}
                         onChange={(e) =>setContraseña(e.target.value)}
                     />
+                    <Form.Text muted>
+                        Debe tener mínimo 8 caracteres, una mayúscula y un número.
+                    </Form.Text>
 
                 </Form.Group>
 
@@ -162,6 +169,7 @@ if (!emailRegex.test(email) || !telefonoRegex.test(telefono)){
 
                     <Form.Control
                         type="text"
+                        placeholder="Ej. 1234567890"
                         value={telefono}
                         onChange={(e) =>
                             setTelefono(e.target.value)
