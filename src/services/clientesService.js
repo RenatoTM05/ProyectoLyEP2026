@@ -9,6 +9,19 @@ const crearCliente = async (cliente) => {
     return respuesta.data;
 };
 
+const actualizarCliente = async (id, cliente) => {
+
+    const respuesta = await axios.put(
+        `${URL}/${id}`,
+        cliente
+    );
+
+    return respuesta.data;
+};
+
+
+
 export default {
-    crearCliente
+    crearCliente,
+    actualizarCliente
 };
