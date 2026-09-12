@@ -13,6 +13,7 @@ const DetalleCliente = () => {
 
   const [cliente, setCliente] = useState(null);
   const [mensaje, setMensaje] = useState("");
+  const [eliminando, setEliminando] = useState(false);
   const [editando, setEditando] = useState(false);
   const formularioRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -51,30 +52,44 @@ const DetalleCliente = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    const inicioCarga = window.setTimeout(cargarCliente, 0);
-    return () => window.clearTimeout(inicioCarga);
-  }, [cargarCliente]);
+const eliminarCliente = async () => {
+  const confirmar = window.confirm(
+    "¿Está seguro de que desea eliminar este cliente?"
+  );
 
-  const eliminarCliente = async () => {
-    try {
-      const respuesta = await fetch(
-        `https://fakestoreapi.com/users/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+  if (!confirmar) {
+    return;
+  }
 
-      if (respuesta.ok) {
-        setMensaje("Cliente eliminado correctamente");
+  setEliminando(true);
+  setMensaje("");
 
-        setTimeout(() => {
-          navigate("/clientes");
-        }, 2000);
+  try {
+    const respuesta = await fetch(
+      `https://fakestoreapi.com/users/${id}`,
+      {
+        method: "DELETE",
       }
-    } catch (error) {
-      setMensaje("Error al eliminar cliente");
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudo eliminar el cliente");
     }
+
+    setMensaje("Cliente eliminado correctamente");
+
+    setTimeout(() => {
+      navigate("/clientes", { state: { clienteEliminado: Number(id) } });
+      setEliminando(false);
+    }, 1000);
+  } catch {
+    setMensaje("Error al eliminar cliente");
+    setEliminando(false);
+  }
+};
+
+  if (!cliente) {
+    return <h2>Cargando cliente...</h2>;
   };
   if (loading) {
     return (
@@ -164,6 +179,14 @@ const DetalleCliente = () => {
       </p>
 
       {role?.trim() === "Gerencia" && (
+        <button
+          className="btn-eliminar"
+          onClick={eliminarCliente}
+          disabled={eliminando}
+          title={eliminando ? "Eliminando cliente" : "Eliminar cliente"}
+        >
+          {eliminando ? "Eliminando..." : "Eliminar Cliente"}
+        </button>
         <>
             <button className='btn-eliminar'onClick={() => {
               setEditando(true);
@@ -174,9 +197,6 @@ const DetalleCliente = () => {
 
             }}>
               Editar Cliente
-            </button>
-            <button className='btn-eliminar'onClick={eliminarCliente}>
-              Eliminar Cliente
             </button>
         </>
       )}
