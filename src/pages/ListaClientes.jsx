@@ -148,7 +148,7 @@ const ListaClientes = () => {
         </section>
 
       ) : (
-
+      <>
       <div className="ordenamiento-clientes">
         <span className="ordenamiento-titulo">Ordenar clientes</span>
 
@@ -237,6 +237,7 @@ const ListaClientes = () => {
         </tbody>
 
       </table>
+      </>
       )}
 
       {totalPaginas > 1 && (
