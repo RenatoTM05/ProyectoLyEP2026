@@ -39,21 +39,17 @@ const Login = () => {
   const manejarSubmit = (e) => {
     e.preventDefault()
     if (!validar()) return
-    const usuario = AutorizacionesService.login(
+    const resultado = AutorizacionesService.login(
       email,
       password,
       sector
     )
-    if (!usuario) {
-     alert('Verifique los datos')
+    if (!resultado.ok) {
+      alert('Verifique los datos')
       return
     }
-    localStorage.setItem("role", usuario.sector)
-    setAdmin({
-      nombre: usuario.nombre,
-      email: usuario.email,
-      sector: usuario.sector
-    })
+    localStorage.setItem('role', resultado.usuario.sector)
+    setAdmin(resultado.usuario)
     navigate('/')
   }
   return (
