@@ -1,5 +1,5 @@
 import "../css/listaclientes.css"
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import FormCliente from "../components/FormCliente";
 
@@ -10,26 +10,34 @@ const ListaClientes = () => {
   const [direccionOrden, setDireccionOrden] = useState("ascendente");
   const [paginaActual, setPaginaActual] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
+  const cargarClientes = useCallback(() => {
+    setLoading(true);
+    setError("");
+
     fetch("https://fakestoreapi.com/users")
       .then((res) => {
         if (!res.ok) {
-          throw new Error("Error al obtener clientes");
+          throw new Error("No se pudo obtener la lista de clientes.");
         }
         return res.json();
       })
       .then((data) => {
         setClientes(data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError(true);
+      .catch((error) => {
+        setError(error.message || "Ocurrió un error inesperado.");
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
 
+  useEffect(() => {
+    const inicioCarga = window.setTimeout(cargarClientes, 0);
+    return () => window.clearTimeout(inicioCarga);
+  }, [cargarClientes]);
   const consulta = busqueda.toLowerCase();
 
   const clientesFiltrados = clientes.filter(
@@ -74,11 +82,25 @@ const ListaClientes = () => {
   );
 
   if (loading) {
-    return <h2>Cargando clientes...</h2>;
+    return (
+      <section className="mensaje-carga" role="status" aria-live="polite">
+        <div className="spinner-carga" aria-hidden="true"></div>
+        <h2>Cargando clientes...</h2>
+        <p>Estamos obteniendo la información. Esperá un momento.</p>
+      </section>
+    );
   }
 
   if (error) {
-    return <h2>Error al cargar los clientes.</h2>;
+    return (
+      <section className="mensaje-error" role="alert">
+        <h2>No se pudieron cargar los clientes</h2>
+        <p>{error}</p>
+        <button type="button" onClick={cargarClientes}>
+          Reintentar
+        </button>
+      </section>
+    );
   }
 
   return (
@@ -111,6 +133,21 @@ const ListaClientes = () => {
         </p>
 
       </div>
+      {clientes.length === 0 ? (
+
+        <p className="mensaje-lista-vacia">
+          No hay clientes registrados todavía.
+        </p>
+
+      ) : clientesFiltrados.length === 0 ? (
+        <section className="mensaje-lista-vacia" role="status">
+          <p>No se encontraron clientes con esa búsqueda.</p>
+          <button type="button" onClick={() => setBusqueda("")}>
+            Limpiar búsqueda
+          </button>
+        </section>
+
+      ) : (
 
       <div className="ordenamiento-clientes">
         <span className="ordenamiento-titulo">Ordenar clientes</span>
@@ -200,6 +237,7 @@ const ListaClientes = () => {
         </tbody>
 
       </table>
+      )}
 
       {totalPaginas > 1 && (
         <div className="paginacion-clientes">
