@@ -1,7 +1,10 @@
 import '../css/detallecliente.css'
-import { useEffect, useState, useRef } from "react";
+
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import FormCliente from "../components/FormCliente";
+import { Link, useParams, useNavigate } from "react-router-dom";
+
  
 const DetalleCliente = () => {
  const { id } = useParams();
@@ -12,12 +15,46 @@ const DetalleCliente = () => {
   const [mensaje, setMensaje] = useState("");
   const [editando, setEditando] = useState(false);
   const formularioRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [clienteInexistente, setClienteInexistente] = useState(false);
+
+  const cargarCliente = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    setClienteInexistente(false);
+    setCliente(null);
+
+    try {
+      const res = await fetch(`https://fakestoreapi.com/users/${id}`);
+
+      if (res.status === 404) {
+        setClienteInexistente(true);
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error("No se pudo obtener la ficha del cliente.");
+      }
+
+      const data = await res.json();
+      if (!data?.id || !data?.name || !data?.address) {
+        setClienteInexistente(true);
+        return;
+      }
+
+      setCliente(data);
+    } catch (error) {
+      setError(error.message || "Ocurrió un error inesperado.");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
-    fetch(`https://fakestoreapi.com/users/${id}`)
-      .then((res) => res.json())
-      .then((data) => setCliente(data));
-  }, [id]);
+    const inicioCarga = window.setTimeout(cargarCliente, 0);
+    return () => window.clearTimeout(inicioCarga);
+  }, [cargarCliente]);
 
   const eliminarCliente = async () => {
     try {
@@ -39,8 +76,34 @@ const DetalleCliente = () => {
       setMensaje("Error al eliminar cliente");
     }
   };
-  if (!cliente) {
-    return <h2>Cargando cliente...</h2>;
+  if (loading) {
+    return (
+      <section className="estado-detalle" role="status" aria-live="polite">
+        <h2>Cargando cliente...</h2>
+        <p>Estamos obteniendo la ficha solicitada.</p>
+      </section>
+    );
+  }
+
+  if (clienteInexistente) {
+    return (
+      <section className="estado-detalle" role="alert">
+        <h2>Cliente inexistente</h2>
+        <p>No existe un cliente con el identificador solicitado.</p>
+        <Link className="btn-volver-clientes" to="/clientes">Volver a clientes</Link>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="estado-detalle estado-detalle-error" role="alert">
+        <h2>No se pudo cargar la ficha</h2>
+        <p>{error}</p>
+        <button type="button" onClick={cargarCliente}>Reintentar</button>
+        <Link className="btn-volver-clientes" to="/clientes">Volver a clientes</Link>
+      </section>
+    );
   }
 
   return (
